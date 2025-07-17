@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Upload, Camera, Calendar, Clock, Sparkles, Star, Download } from 'lucide-react';
+import { Heart, Upload, Camera, Calendar, Clock, Sparkles, Star, Download, History } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
 
 const LoveTimerPage = () => {
@@ -236,21 +236,21 @@ const LoveTimerPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-4xl mx-auto"
+            className="relative flex items-center justify-center mb-12 max-w-4xl mx-auto px-4"
           >
-            {/* Yamin's Photo Frame */}
+            {/* Yamin's Photo Frame - Left */}
             <motion.div
-              className="relative group"
-              whileHover={{ scale: 1.02 }}
+              className="relative z-10"
+              whileHover={{ scale: 1.05, zIndex: 20 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <div className="glassmorphism-card p-6 text-center">
-                <h3 className="text-xl font-bold text-[#1a1033] mb-4 flex items-center justify-center">
+              <div className="glassmorphism-card p-4 text-center w-44 sm:w-52">
+                <h3 className="text-lg font-bold text-[#1a1033] mb-3 flex items-center justify-center">
                   <span className="mr-2">🦁</span>
                   Yamin
                 </h3>
-                <div className="relative w-48 h-48 mx-auto mb-4">
-                  <div className="w-full h-full rounded-full border-4 border-white border-opacity-30 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-3">
+                  <div className="w-full h-full rounded-full border-4 border-blue-200 border-opacity-50 overflow-hidden bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center shadow-lg">
                     {yaminImage ? (
                       <img
                         src={yaminImage}
@@ -259,50 +259,91 @@ const LoveTimerPage = () => {
                       />
                     ) : (
                       <div className="text-center">
-                        <Camera className="text-[#1a1033] opacity-40 mx-auto mb-2" size={32} />
-                        <p className="text-[#1a1033] opacity-60 text-sm">Thêm ảnh của Yamin</p>
+                        <Camera className="text-[#1a1033] opacity-40 mx-auto mb-1" size={24} />
+                        <p className="text-[#1a1033] opacity-60 text-xs">Thêm ảnh</p>
                       </div>
                     )}
                   </div>
                   {/* Upload/Remove buttons */}
-                  <div className="absolute -bottom-2 -right-2 flex space-x-2">
+                  <div className="absolute -bottom-1 -right-1 flex space-x-1">
                     <motion.button
                       onClick={() => openUploadModal('yamin')}
-                      className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
+                      className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
-                      <Upload size={16} />
+                      <Upload size={12} />
                     </motion.button>
                     {yaminImage && (
                       <motion.button
                         onClick={() => removeImage('yamin')}
-                        className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                        className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        ×
+                        <span className="text-xs">×</span>
                       </motion.button>
                     )}
                   </div>
                 </div>
-                <p className="text-[#1a1033] opacity-70 text-sm">30/07/2004</p>
+                <p className="text-[#1a1033] opacity-70 text-xs">Gia Minh</p>
               </div>
             </motion.div>
 
-            {/* Mio's Photo Frame */}
+            {/* Central Heart */}
             <motion.div
-              className="relative group"
-              whileHover={{ scale: 1.02 }}
+              className="relative z-30 flex items-center justify-center mx-2 sm:mx-4"
+              animate={{
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            >
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center shadow-xl border-4 border-white border-opacity-30">
+                <Heart className="text-white" size={28} fill="currentColor" />
+              </div>
+              {/* Floating particles around heart */}
+              <div className="absolute inset-0">
+                {[...Array(6)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-rose-400 rounded-full"
+                    style={{
+                      left: `${20 + i * 12}%`,
+                      top: `${30 + (i % 2) * 40}%`,
+                    }}
+                    animate={{
+                      y: [0, -15, 0],
+                      opacity: [0.3, 0.8, 0.3],
+                      scale: [1, 1.5, 1],
+                    }}
+                    transition={{
+                      duration: 2 + i * 0.3,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                    }}
+                  />
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Mio's Photo Frame - Right */}
+            <motion.div
+              className="relative z-10"
+              whileHover={{ scale: 1.05, zIndex: 20 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <div className="glassmorphism-card p-6 text-center">
-                <h3 className="text-xl font-bold text-[#1a1033] mb-4 flex items-center justify-center">
+              <div className="glassmorphism-card p-4 text-center w-44 sm:w-52">
+                <h3 className="text-lg font-bold text-[#1a1033] mb-3 flex items-center justify-center">
                   <span className="mr-2">🌸</span>
                   Mio
                 </h3>
-                <div className="relative w-48 h-48 mx-auto mb-4">
-                  <div className="w-full h-full rounded-full border-4 border-white border-opacity-30 overflow-hidden bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
+                <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-3">
+                  <div className="w-full h-full rounded-full border-4 border-pink-200 border-opacity-50 overflow-hidden bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center shadow-lg">
                     {mioImage ? (
                       <img
                         src={mioImage}
@@ -311,34 +352,34 @@ const LoveTimerPage = () => {
                       />
                     ) : (
                       <div className="text-center">
-                        <Camera className="text-[#1a1033] opacity-40 mx-auto mb-2" size={32} />
-                        <p className="text-[#1a1033] opacity-60 text-sm">Thêm ảnh của Mio</p>
+                        <Camera className="text-[#1a1033] opacity-40 mx-auto mb-1" size={24} />
+                        <p className="text-[#1a1033] opacity-60 text-xs">Thêm ảnh</p>
                       </div>
                     )}
                   </div>
                   {/* Upload/Remove buttons */}
-                  <div className="absolute -bottom-2 -right-2 flex space-x-2">
+                  <div className="absolute -bottom-1 -right-1 flex space-x-1">
                     <motion.button
                       onClick={() => openUploadModal('mio')}
-                      className="w-10 h-10 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-pink-600 transition-colors"
+                      className="w-8 h-8 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-pink-600 transition-colors"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                     >
-                      <Upload size={16} />
+                      <Upload size={12} />
                     </motion.button>
                     {mioImage && (
                       <motion.button
                         onClick={() => removeImage('mio')}
-                        className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                        className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        ×
+                        <span className="text-xs">×</span>
                       </motion.button>
                     )}
                   </div>
                 </div>
-                <p className="text-[#1a1033] opacity-70 text-sm">02/10/2002</p>
+                <p className="text-[#1a1033] opacity-70 text-xs">Bảo Ngọc</p>
               </div>
             </motion.div>
           </motion.div>
@@ -362,7 +403,6 @@ const LoveTimerPage = () => {
               }}
               className="inline-block"
             >
-              <Heart className="text-rose-500 mx-auto mb-4" size={48} fill="currentColor" />
             </motion.div>
             <h2 className="text-2xl font-bold text-[#1a1033] mb-2">
               Yamin ❤️ Mio
@@ -435,12 +475,12 @@ const LoveTimerPage = () => {
                 </div>
               </div>
 
-              <p className="text-[#1a1033] text-lg mb-4">
+              <p className="text-[#1a1033] text-lg mb-4 mt-6">
                 <span className="font-semibold">Tổng cộng:</span> {timeDiff.days} ngày yêu nhau
               </p>
 
               <div className="flex justify-center items-center space-x-2">
-                <FaRegClock className={iconStyles.clock} />
+                <Clock className="text-[#1a1033] opacity-60" size={16} />
                 <span className="text-[#1a1033] text-sm opacity-80">
                   Cập nhật: {currentTime.toLocaleTimeString()}
                 </span>
@@ -456,7 +496,7 @@ const LoveTimerPage = () => {
             animate="visible"
           >
             <div className="flex items-center justify-center mb-6">
-              <FaHistory className={`mr-2 ${iconStyles.history}`} />
+              <History className="mr-2 text-purple-500" size={20} />
               <h2 className="text-2xl font-display font-semibold text-[#1a1033]">
                 Các cột mốc quan trọng
               </h2>

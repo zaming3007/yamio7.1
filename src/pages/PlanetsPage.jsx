@@ -123,7 +123,7 @@ const PlanetsPage = () => {
       house: "Nhà 7",
       icon: "☉",
       color: "text-yellow-500",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Mặt Trời trong Sư Tử của Yamin..."
       ],
@@ -136,7 +136,7 @@ const PlanetsPage = () => {
       house: "Nhà 3",
       icon: "☽",
       color: "text-blue-400",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Mặt Trăng trong Bạch Dương của Yamin..."
       ],
@@ -149,7 +149,7 @@ const PlanetsPage = () => {
       house: "Nhà 7",
       icon: "☿",
       color: "text-green-500",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Sao Thủy trong Sư Tử của Yamin..."
       ],
@@ -162,7 +162,7 @@ const PlanetsPage = () => {
       house: "Nhà 8",
       icon: "♀",
       color: "text-pink-500",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Sao Kim trong Xử Nữ của Yamin..."
       ],
@@ -175,7 +175,7 @@ const PlanetsPage = () => {
       house: "Nhà 5",
       icon: "♂",
       color: "text-red-500",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Sao Hỏa trong Song Tử của Yamin..."
       ],
@@ -188,7 +188,7 @@ const PlanetsPage = () => {
       house: "Nhà 8",
       icon: "♃",
       color: "text-purple-500",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Sao Mộc trong Xử Nữ của Yamin..."
       ],
@@ -201,7 +201,7 @@ const PlanetsPage = () => {
       house: "Nhà 5",
       icon: "♄",
       color: "text-gray-600",
-      description: [
+      content: [
         "Sẽ được điền thông tin sau...",
         "Thông tin về Sao Thổ trong Song Tử của Yamin..."
       ],
@@ -343,7 +343,7 @@ const PlanetsPage = () => {
           {/* Planet indicator */}
           <div className="flex justify-center my-4">
             <div className="flex space-x-2">
-              {astrologyData.map((_, idx) => (
+              {currentAstrologyData.map((_, idx) => (
                 <div
                   key={idx}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === selectedTab
@@ -426,7 +426,7 @@ const PlanetsPage = () => {
                         >
                           {selectedTab > 0 && <span className="mr-2">← Lướt qua trái</span>}
                           <span className="inline-block mx-1 w-1 h-1 rounded-full bg-[#1a1033] bg-opacity-30"></span>
-                          {selectedTab < astrologyData.length - 1 && <span className="ml-2">Lướt qua phải →</span>}
+                          {selectedTab < currentAstrologyData.length - 1 && <span className="ml-2">Lướt qua phải →</span>}
                         </motion.div>
                       </div>
                     </motion.div>

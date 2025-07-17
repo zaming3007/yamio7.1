@@ -1,12 +1,16 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Star, BookOpen, ArrowRight, Heart, Camera, Link as LinkIcon, Archive } from 'lucide-react';
+import { Star, BookOpen, ArrowRight, Heart, Camera, Link as LinkIcon, Archive, MoreHorizontal, Timer, Target, Image } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
 import DailyAffirmation from '../components/common/DailyAffirmation';
 
 const HomePage = () => {
+  const [showMore, setShowMore] = useState(false);
   // Define icon styles with direct colors instead of gradients
   const iconStyles = {
+    journey: "text-purple-500",
+    timer: "text-rose-500",
     planets: "text-amber-500",
     camera: "text-pink-500",
     link: "text-indigo-500",
@@ -14,30 +18,47 @@ const HomePage = () => {
     heart: "text-rose-500",
   };
 
-  const features = [
+  // Main features - most important ones
+  const mainFeatures = [
+    {
+      path: '/journey',
+      icon: <BookOpen className={`text-4xl mb-3 ${iconStyles.journey}`} size={36} strokeWidth={1.5} />,
+      title: 'Hành Trình',
+      description: 'Câu chuyện tình yêu của chúng mình từ những ngày đầu',
+    },
+    {
+      path: '/love-timer',
+      icon: <Timer className={`text-4xl mb-3 ${iconStyles.timer}`} size={36} strokeWidth={1.5} />,
+      title: 'Love Timer',
+      description: 'Đếm từng giây phút yêu thương và những khoảnh khắc đẹp',
+    },
     {
       path: '/planets',
       icon: <Star className={`text-4xl mb-3 ${iconStyles.planets}`} size={36} strokeWidth={1.5} />,
-      title: 'Các Hành Tinh',
-      description: 'Khám phá ảnh hưởng của các hành tinh lên tính cách của cả hai',
+      title: 'Chiêm Tinh',
+      description: 'Khám phá ảnh hưởng của các hành tinh lên tính cách',
     },
-    {
-      path: '/personality',
-      icon: <Camera className={`text-4xl mb-3 ${iconStyles.camera}`} size={36} strokeWidth={1.5} />,
-      title: 'Love Look',
-      description: 'Không gian riêng tư để ngắm nhìn và yêu thương nhau',
-    },
+  ];
+
+  // Secondary features - accessible through "More" section
+  const moreFeatures = [
     {
       path: '/couple-goals',
-      icon: <LinkIcon className={`text-4xl mb-3 ${iconStyles.link}`} size={36} strokeWidth={1.5} />,
+      icon: <Target className="text-2xl" size={24} />,
       title: 'Couple Goals',
-      description: 'Đặt mục tiêu chung và cùng nhau phấn đấu thực hiện',
+      description: 'Đặt mục tiêu chung và cùng nhau thực hiện',
     },
     {
       path: '/memory-wall',
-      icon: <Archive className={`text-4xl mb-3 ${iconStyles.archive}`} size={36} strokeWidth={1.5} />,
+      icon: <Image className="text-2xl" size={24} />,
       title: 'Memory Wall',
-      description: 'Lưu giữ những kỷ niệm đáng nhớ và câu chuyện tình yêu',
+      description: 'Lưu giữ những kỷ niệm đáng nhớ',
+    },
+    {
+      path: '/admin/messages',
+      icon: <Archive className="text-2xl" size={24} />,
+      title: 'Tin Nhắn',
+      description: 'Quản lý tất cả tin nhắn trong hành trình',
     },
   ];
 
@@ -130,13 +151,14 @@ const HomePage = () => {
           </Link>
         </motion.div>
 
+        {/* Main Features */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          {features.map((feature, index) => (
+          {mainFeatures.map((feature, index) => (
             <motion.div
               key={index}
               className="glass-card hover:shadow-glow transition-all duration-300"
@@ -153,6 +175,59 @@ const HomePage = () => {
               </Link>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* More Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="text-center"
+        >
+          <motion.button
+            onClick={() => setShowMore(!showMore)}
+            className="glass-card inline-flex items-center space-x-2 px-6 py-3 hover:shadow-glow transition-all duration-300"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <MoreHorizontal className="text-[#1a1033]" size={20} />
+            <span className="text-[#1a1033] font-medium">
+              {showMore ? 'Ẩn bớt' : 'Thêm tính năng'}
+            </span>
+          </motion.button>
+
+          <AnimatePresence>
+            {showMore && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-6 overflow-hidden"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {moreFeatures.map((feature, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="glass-card hover:shadow-glow transition-all duration-300 p-4"
+                      whileHover={{ y: -3 }}
+                    >
+                      <Link to={feature.path} className="block text-center">
+                        <div className="flex justify-center mb-2">
+                          {feature.icon}
+                        </div>
+                        <h4 className="text-lg font-semibold mb-1 text-[#1a1033]">{feature.title}</h4>
+                        <p className="text-[#1a1033] text-opacity-70 text-xs">{feature.description}</p>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
 
