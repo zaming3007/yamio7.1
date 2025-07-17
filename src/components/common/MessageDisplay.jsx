@@ -93,11 +93,19 @@ const MessageDisplay = ({ journeySection = 'moon-section', adminView = false, on
 
     setDeletingMessage(messageId);
     try {
+      // Optimistically remove from UI first
+      setMessages(prev => prev.filter(msg => msg.id !== messageId));
+
+      // Then delete from database
       await messageService.deleteMessage(messageId);
-      // Message will be removed from state via real-time subscription
+
+      // Real-time subscription should handle this, but we've already updated UI
     } catch (error) {
       console.error('Error deleting message:', error);
       alert('Không thể xóa tin nhắn. Vui lòng thử lại!');
+
+      // If delete failed, reload messages to restore UI state
+      loadMessages();
     } finally {
       setDeletingMessage(null);
     }

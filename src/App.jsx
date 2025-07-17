@@ -14,6 +14,8 @@ import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import MemoryWallPage from './pages/MemoryWallPage';
 import CoupleGoalsPage from './pages/CoupleGoalsPage';
+import WeatherTrackerPage from './pages/WeatherTrackerPage';
+import FeedbackPage from './pages/FeedbackPage';
 import EnhancedBackground from './components/common/EnhancedBackground';
 
 // ScrollToTop component to ensure page scrolls to top on route changes
@@ -82,6 +84,8 @@ const AnimatedRoutes = () => {
         <Route path="/love-timer" element={<LoveTimerPage />} />
         <Route path="/memory-wall" element={<MemoryWallPage />} />
         <Route path="/couple-goals" element={<CoupleGoalsPage />} />
+        <Route path="/weather" element={<WeatherTrackerPage />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/admin/messages" element={<AdminMessagesPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

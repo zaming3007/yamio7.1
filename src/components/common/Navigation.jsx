@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { FaHome, FaStar, FaMagic, FaHeart, FaCamera, FaEllipsisH, FaBullseye, FaImages, FaCog } from 'react-icons/fa';
+import { FaHome, FaStar, FaMagic, FaHeart, FaCamera, FaEllipsisH, FaBullseye, FaImages, FaCog, FaCloudSun, FaComments } from 'react-icons/fa';
 
 const Navigation = () => {
   const [showMore, setShowMore] = useState(false);
@@ -19,6 +19,8 @@ const Navigation = () => {
   // Secondary navigation items (in More menu)
   const moreNavItems = [
     { path: '/personality', label: 'Love Look', icon: <FaCamera className={iconColor} /> },
+    { path: '/weather', label: 'Weather', icon: <FaCloudSun className={iconColor} /> },
+    { path: '/feedback', label: 'Feedback', icon: <FaComments className={iconColor} /> },
     { path: '/couple-goals', label: 'Couple Goals', icon: <FaBullseye className={iconColor} /> },
     { path: '/memory-wall', label: 'Memory Wall', icon: <FaImages className={iconColor} /> },
     { path: '/admin/messages', label: 'Tin Nhắn', icon: <FaCog className={iconColor} /> },
