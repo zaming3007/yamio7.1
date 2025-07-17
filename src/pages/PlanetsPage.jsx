@@ -5,14 +5,15 @@ import AnimatedRoute from '../components/common/AnimatedRoute';
 
 const PlanetsPage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  
-  // Chi tiết về từng hành tinh
-  const astrologyData = [
+  const [selectedPerson, setSelectedPerson] = useState(0); // 0: Mio, 1: Yamin
+
+  // Chi tiết về từng hành tinh của Mio
+  const mioAstrologyData = [
     {
       id: "sun",
       title: "Mặt Trời",
       sign: "Thiên Bình",
-      house: "Nhà 4", 
+      house: "Nhà 4",
       icon: "☀️",
       color: "planet-sun",
       signColor: "sign-libra",
@@ -27,7 +28,7 @@ const PlanetsPage = () => {
       id: "moon",
       title: "Mặt Trăng",
       sign: "Sư Tử",
-      house: "Nhà 3", 
+      house: "Nhà 3",
       icon: "🌙",
       color: "planet-moon",
       signColor: "sign-leo",
@@ -42,7 +43,7 @@ const PlanetsPage = () => {
       id: "mercury",
       title: "Sao Thủy",
       sign: "Xử Nữ",
-      house: "Nhà 4", 
+      house: "Nhà 4",
       icon: "☿",
       color: "planet-mercury",
       signColor: "sign-virgo",
@@ -57,7 +58,7 @@ const PlanetsPage = () => {
       id: "venus",
       title: "Sao Kim",
       sign: "Bọ Cạp",
-      house: "Nhà 5", 
+      house: "Nhà 5",
       icon: "♀️",
       color: "planet-venus",
       signColor: "sign-scorpio",
@@ -72,7 +73,7 @@ const PlanetsPage = () => {
       id: "mars",
       title: "Sao Hỏa",
       sign: "Xử Nữ",
-      house: "Nhà 4", 
+      house: "Nhà 4",
       icon: "♂️",
       color: "planet-mars",
       signColor: "sign-virgo",
@@ -87,7 +88,7 @@ const PlanetsPage = () => {
       id: "jupiter",
       title: "Sao Mộc",
       sign: "Sư Tử",
-      house: "Nhà 3", 
+      house: "Nhà 3",
       icon: "♃",
       color: "planet-jupiter",
       signColor: "sign-leo",
@@ -101,7 +102,7 @@ const PlanetsPage = () => {
       id: "saturn",
       title: "Sao Thổ",
       sign: "Song Tử",
-      house: "Nhà 1", 
+      house: "Nhà 1",
       icon: "♄",
       color: "planet-saturn",
       signColor: "sign-gemini",
@@ -113,17 +114,115 @@ const PlanetsPage = () => {
     }
   ];
 
+  // Chi tiết về từng hành tinh của Yamin (30/07/2004)
+  const yaminAstrologyData = [
+    {
+      id: "sun",
+      title: "Mặt Trời",
+      sign: "Sư Tử",
+      house: "Nhà 7",
+      icon: "☉",
+      color: "text-yellow-500",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Mặt Trời trong Sư Tử của Yamin..."
+      ],
+      insight: "Bài học về lãnh đạo và sự tự tin."
+    },
+    {
+      id: "moon",
+      title: "Mặt Trăng",
+      sign: "Bạch Dương",
+      house: "Nhà 3",
+      icon: "☽",
+      color: "text-blue-400",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Mặt Trăng trong Bạch Dương của Yamin..."
+      ],
+      insight: "Bài học về cảm xúc và bản năng."
+    },
+    {
+      id: "mercury",
+      title: "Sao Thủy",
+      sign: "Sư Tử",
+      house: "Nhà 7",
+      icon: "☿",
+      color: "text-green-500",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Sao Thủy trong Sư Tử của Yamin..."
+      ],
+      insight: "Bài học về giao tiếp và tư duy."
+    },
+    {
+      id: "venus",
+      title: "Sao Kim",
+      sign: "Xử Nữ",
+      house: "Nhà 8",
+      icon: "♀",
+      color: "text-pink-500",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Sao Kim trong Xử Nữ của Yamin..."
+      ],
+      insight: "Bài học về tình yêu và giá trị."
+    },
+    {
+      id: "mars",
+      title: "Sao Hỏa",
+      sign: "Song Tử",
+      house: "Nhà 5",
+      icon: "♂",
+      color: "text-red-500",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Sao Hỏa trong Song Tử của Yamin..."
+      ],
+      insight: "Bài học về hành động và động lực."
+    },
+    {
+      id: "jupiter",
+      title: "Sao Mộc",
+      sign: "Xử Nữ",
+      house: "Nhà 8",
+      icon: "♃",
+      color: "text-purple-500",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Sao Mộc trong Xử Nữ của Yamin..."
+      ],
+      insight: "Bài học về sự mở rộng và trí tuệ."
+    },
+    {
+      id: "saturn",
+      title: "Sao Thổ",
+      sign: "Song Tử",
+      house: "Nhà 5",
+      icon: "♄",
+      color: "text-gray-600",
+      description: [
+        "Sẽ được điền thông tin sau...",
+        "Thông tin về Sao Thổ trong Song Tử của Yamin..."
+      ],
+      insight: "Bài học về kỷ luật và trách nhiệm."
+    }
+  ];
+
+  // Get current astrology data based on selected person
+  const currentAstrologyData = selectedPerson === 0 ? mioAstrologyData : yaminAstrologyData;
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         staggerChildren: 0.08,
         delayChildren: 0.1
-      } 
+      }
     },
-    exit: { 
+    exit: {
       opacity: 0,
       transition: { duration: 0.2 }
     }
@@ -131,8 +230,8 @@ const PlanetsPage = () => {
 
   const itemVariants = {
     hidden: { y: 15, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { type: "spring", stiffness: 100 }
     }
@@ -140,7 +239,7 @@ const PlanetsPage = () => {
 
   // Touch swipe handling
   const handleSwipe = (direction) => {
-    if (direction === 'left' && selectedTab < astrologyData.length - 1) {
+    if (direction === 'left' && selectedTab < currentAstrologyData.length - 1) {
       setSelectedTab(selectedTab + 1);
     } else if (direction === 'right' && selectedTab > 0) {
       setSelectedTab(selectedTab - 1);
@@ -167,14 +266,57 @@ const PlanetsPage = () => {
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-display font-bold mb-3 text-gradient">Các Hành Tinh</h1>
           <p className="text-overlay content-backdrop max-w-lg mx-auto">
-            Mỗi hành tinh đại diện cho một khía cạnh khác nhau trong tính cách và cuộc sống của bạn. 
-            Khám phá ý nghĩa của từng hành tinh trong bản đồ sao của bạn.
+            Mỗi hành tinh đại diện cho một khía cạnh khác nhau trong tính cách và cuộc sống.
+            Khám phá ý nghĩa của từng hành tinh trong bản đồ sao của cả hai.
           </p>
         </div>
 
+        {/* Person Selector */}
+        <motion.div
+          className="flex justify-center mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className="glass-card p-2 rounded-xl">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => {
+                  setSelectedPerson(0);
+                  setSelectedTab(0);
+                }}
+                className={`px-6 py-3 rounded-lg font-medium transition-all ${selectedPerson === 0
+                  ? 'bg-white bg-opacity-30 text-[#1a1033] shadow-sm'
+                  : 'text-[#1a1033] text-opacity-70 hover:text-opacity-100'
+                  }`}
+              >
+                <span className="flex items-center space-x-2">
+                  <span>🌸</span>
+                  <span>Mio</span>
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedPerson(1);
+                  setSelectedTab(0);
+                }}
+                className={`px-6 py-3 rounded-lg font-medium transition-all ${selectedPerson === 1
+                  ? 'bg-white bg-opacity-30 text-[#1a1033] shadow-sm'
+                  : 'text-[#1a1033] text-opacity-70 hover:text-opacity-100'
+                  }`}
+              >
+                <span className="flex items-center space-x-2">
+                  <span>🦁</span>
+                  <span>Yamin</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
         <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
           {/* Tabs */}
-          <motion.div 
+          <motion.div
             className="sticky top-0 pt-2 pb-4 z-10 backdrop-blur-sm"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -182,12 +324,11 @@ const PlanetsPage = () => {
           >
             <Tab.List className="flex p-2 rounded-xl glass-card overflow-x-auto hide-scrollbar">
               <div className="flex space-x-2 w-full">
-                {astrologyData.map((planet) => (
+                {currentAstrologyData.map((planet) => (
                   <Tab
                     key={planet.id}
                     className={({ selected }) =>
-                      `tab-button flex-shrink-0 outline-none ${
-                        selected ? 'bg-white bg-opacity-30 shadow-sm text-[#1a1033] font-semibold' : 'text-[#1a1033] text-opacity-70'
+                      `tab-button flex-shrink-0 outline-none ${selected ? 'bg-white bg-opacity-30 shadow-sm text-[#1a1033] font-semibold' : 'text-[#1a1033] text-opacity-70'
                       }`
                     }
                   >
@@ -203,13 +344,12 @@ const PlanetsPage = () => {
           <div className="flex justify-center my-4">
             <div className="flex space-x-2">
               {astrologyData.map((_, idx) => (
-                <div 
-                  key={idx} 
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    idx === selectedTab 
-                      ? 'bg-[#1a1033] scale-125' 
-                      : 'bg-[#1a1033] bg-opacity-30'
-                  }`}
+                <div
+                  key={idx}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === selectedTab
+                    ? 'bg-[#1a1033] scale-125'
+                    : 'bg-[#1a1033] bg-opacity-30'
+                    }`}
                 />
               ))}
             </div>
@@ -218,7 +358,7 @@ const PlanetsPage = () => {
           {/* Tab content with swipe support */}
           <Tab.Panels className="mt-4">
             <AnimatePresence mode="wait">
-              {astrologyData.map((planet, idx) => (
+              {currentAstrologyData.map((planet, idx) => (
                 <Tab.Panel
                   key={planet.id}
                   className="focus:outline-none"
@@ -234,7 +374,7 @@ const PlanetsPage = () => {
                       {...swipeProps}
                     >
                       <span className={`planet-icon ${planet.color}`}>{planet.icon}</span>
-                      
+
                       <motion.div className="planet-header" variants={itemVariants}>
                         <span className={`text-2xl ${planet.color}`}>{planet.icon}</span>
                         <div>
@@ -253,11 +393,11 @@ const PlanetsPage = () => {
                           )}
                         </div>
                       </motion.div>
-                      
+
                       <div className="space-y-3 relative z-10 content-backdrop">
                         {planet.content.map((paragraph, pIdx) => (
-                          <motion.p 
-                            key={pIdx} 
+                          <motion.p
+                            key={pIdx}
                             className="text-sm md:text-base text-overlay"
                             variants={itemVariants}
                           >
@@ -265,9 +405,9 @@ const PlanetsPage = () => {
                           </motion.p>
                         ))}
                       </div>
-                      
+
                       {planet.insight && (
-                        <motion.div 
+                        <motion.div
                           className={`insight-box border-${planet.color}`}
                           variants={itemVariants}
                         >
@@ -278,7 +418,7 @@ const PlanetsPage = () => {
 
                       {/* Swipe indicator */}
                       <div className="mt-6 text-center text-xs text-[#1a1033] text-opacity-60 font-medium">
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.5 }}

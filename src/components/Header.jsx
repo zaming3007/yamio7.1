@@ -10,13 +10,13 @@ const Header = () => {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="text-center"
         >
-          <motion.h1 
-            className="font-display text-4xl md:text-5xl font-bold text-white"
+          <motion.h1
+            className="font-display text-3xl md:text-4xl font-bold text-white"
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Văn Bảo Ngọc
+            Yamin <span className="text-rose-500">❤</span> Mio
           </motion.h1>
           <motion.p
             className="mt-2 text-white text-opacity-90 font-medium text-sm md:text-base"
@@ -24,10 +24,10 @@ const Header = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Yamin <span className="text-rose-500">❤</span> Mio
+            Không gian riêng của chúng mình
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             className="mt-4 flex justify-center space-x-2 text-xs md:text-sm text-white text-opacity-80"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -41,7 +41,7 @@ const Header = () => {
           </motion.div>
         </motion.div>
       </div>
-      
+
       {/* Decorative stars */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 z-0">
         {[...Array(20)].map((_, i) => (

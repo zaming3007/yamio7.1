@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Navigation from './components/common/Navigation';
@@ -10,6 +11,9 @@ import JourneyPage from './pages/JourneyPage';
 import LoveTimerPage from './pages/LoveTimerPage';
 import AdminMessagesPage from './pages/AdminMessagesPage';
 import NotFoundPage from './pages/NotFoundPage';
+import LoginPage from './pages/LoginPage';
+import MemoryWallPage from './pages/MemoryWallPage';
+import CoupleGoalsPage from './pages/CoupleGoalsPage';
 import EnhancedBackground from './components/common/EnhancedBackground';
 
 // ScrollToTop component to ensure page scrolls to top on route changes
@@ -76,6 +80,8 @@ const AnimatedRoutes = () => {
         <Route path="/insights" element={<CombinePage />} />
         <Route path="/archive" element={<ArchivePage />} />
         <Route path="/love-timer" element={<LoveTimerPage />} />
+        <Route path="/memory-wall" element={<MemoryWallPage />} />
+        <Route path="/couple-goals" element={<CoupleGoalsPage />} />
         <Route path="/admin/messages" element={<AdminMessagesPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
@@ -84,6 +90,7 @@ const AnimatedRoutes = () => {
 };
 
 function App() {
+  const { isAuthenticated, isLoading } = useAuth();
   const [showNavigation, setShowNavigation] = useState(true);
   const [showHeader, setShowHeader] = useState(true);
   const [showFooter, setShowFooter] = useState(true);
@@ -108,6 +115,24 @@ function App() {
     }
   }, [location.pathname]);
 
+  // Show loading screen while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <EnhancedBackground intensity="medium" />
+        <div className="relative z-10 text-center">
+          <div className="w-8 h-8 border-2 border-[#1A1033] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#1A1033] opacity-70">Đang tải...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={() => window.location.reload()} />;
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Add ScrollToTop component to handle scrolling on route changes */}
@@ -127,12 +152,14 @@ function App() {
   );
 }
 
-// Wrapper to provide location context
+// Wrapper to provide location context and auth
 const AppWithRouter = () => {
   return (
-    <Router>
-      <App />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <App />
+      </Router>
+    </AuthProvider>
   );
 };
 

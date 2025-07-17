@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Heart, MessageCircle, Check, X } from 'lucide-react';
+import { Send, Heart, MessageCircle, Check, X, Smile } from 'lucide-react';
 import { messageService } from '../../lib/supabase';
 
-const MessageForm = ({ journeySection = 'moon-section', onFormStateChange }) => {
+const MessageForm = ({ journeySection = 'moon-section', onFormStateChange, onMessageSent }) => {
   const [message, setMessage] = useState('');
   const [senderName, setSenderName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
   const [charCount, setCharCount] = useState(0);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const maxChars = 500;
+
+  const emojis = ['❤️', '😍', '🥰', '😘', '💕', '💖', '💗', '💝', '💞', '💓', '🌹', '🌸', '🌺', '🦋', '✨', '💫', '⭐', '🌟', '💎', '🎀', '🎈', '🎉', '🎊', '🥳', '😊', '😄', '😁', '🤗', '🤭', '😌', '🙈', '🙉', '🙊'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ const MessageForm = ({ journeySection = 'moon-section', onFormStateChange }) => 
     setSubmitStatus(null);
 
     try {
-      await messageService.addMessage(
+      const newMessage = await messageService.addMessage(
         message.trim(),
         { name: senderName.trim() || 'Ẩn danh', timestamp: new Date().toISOString() },
         journeySection
@@ -30,6 +33,12 @@ const MessageForm = ({ journeySection = 'moon-section', onFormStateChange }) => 
       setMessage('');
       setSenderName('');
       setCharCount(0);
+      setShowEmojiPicker(false);
+
+      // Notify parent component about new message
+      if (onMessageSent) {
+        onMessageSent(newMessage);
+      }
 
       // Auto hide form after success
       setTimeout(() => {
@@ -51,6 +60,15 @@ const MessageForm = ({ journeySection = 'moon-section', onFormStateChange }) => 
       setMessage(value);
       setCharCount(value.length);
     }
+  };
+
+  const addEmoji = (emoji) => {
+    const newMessage = message + emoji;
+    if (newMessage.length <= maxChars) {
+      setMessage(newMessage);
+      setCharCount(newMessage.length);
+    }
+    setShowEmojiPicker(false);
   };
 
   const toggleForm = () => {
@@ -154,14 +172,54 @@ const MessageForm = ({ journeySection = 'moon-section', onFormStateChange }) => 
                       {charCount}/{maxChars}
                     </span>
                   </div>
-                  <textarea
-                    value={message}
-                    onChange={handleMessageChange}
-                    placeholder="Chia sẻ cảm xúc, suy nghĩ của bạn về hành trình này..."
-                    className="w-full px-4 py-3 rounded-xl bg-white bg-opacity-20 border border-white border-opacity-30 text-[#1A1033] placeholder-[#1A1033] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[#1A1033] focus:ring-opacity-30 focus:border-opacity-50 transition-all resize-none"
-                    rows={4}
-                    required
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={message}
+                      onChange={handleMessageChange}
+                      placeholder="Chia sẻ cảm xúc, suy nghĩ của bạn về box suy nghĩ này..."
+                      className="w-full px-4 py-3 pr-12 rounded-xl bg-white bg-opacity-20 border border-white border-opacity-30 text-[#1A1033] placeholder-[#1A1033] placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[#1A1033] focus:ring-opacity-30 focus:border-opacity-50 transition-all resize-none"
+                      rows={4}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className="absolute right-3 top-3 text-[#1A1033] opacity-60 hover:opacity-100 transition-opacity"
+                    >
+                      <Smile size={20} />
+                    </button>
+                  </div>
+
+                  {/* Emoji Picker */}
+                  <AnimatePresence>
+                    {showEmojiPicker && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="bg-white bg-opacity-90 backdrop-blur-sm rounded-xl p-3 border border-white border-opacity-40 max-h-32 overflow-y-auto shadow-lg"
+                      >
+                        <div className="grid grid-cols-8 gap-1">
+                          {emojis.map((emoji, index) => (
+                            <motion.button
+                              key={index}
+                              type="button"
+                              onClick={() => addEmoji(emoji)}
+                              className="text-lg hover:bg-white hover:bg-opacity-50 rounded p-1 transition-all"
+                              whileHover={{ scale: 1.2 }}
+                              whileTap={{ scale: 0.9 }}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: index * 0.02 }}
+                            >
+                              {emoji}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Submit Button */}

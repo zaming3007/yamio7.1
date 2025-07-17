@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Heart, User, Clock } from 'lucide-react';
+import { MessageCircle, Heart, User, Clock, Trash2, MoreHorizontal } from 'lucide-react';
 import { messageService } from '../../lib/supabase';
 
-const MessageDisplay = ({ journeySection = 'moon-section', adminView = false }) => {
+const MessageDisplay = ({ journeySection = 'moon-section', adminView = false, onRefresh }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMessages, setShowMessages] = useState(true); // Hiển thị mặc định
+  const [deletingMessage, setDeletingMessage] = useState(null);
 
   useEffect(() => {
     // Load initial messages
@@ -14,11 +15,16 @@ const MessageDisplay = ({ journeySection = 'moon-section', adminView = false }) 
 
     // Subscribe to real-time updates
     const subscription = messageService.subscribeToMessages((payload) => {
-      const newMessage = payload.new;
+      if (payload.eventType === 'INSERT') {
+        const newMessage = payload.new;
 
-      // Only show messages for current section (unless admin view)
-      if (adminView || newMessage.journey_section === journeySection) {
-        setMessages(prev => [newMessage, ...prev]);
+        // Only show messages for current section (unless admin view)
+        if (adminView || newMessage.journey_section === journeySection) {
+          setMessages(prev => [newMessage, ...prev]);
+        }
+      } else if (payload.eventType === 'DELETE') {
+        // Remove deleted message from state
+        setMessages(prev => prev.filter(msg => msg.id !== payload.old.id));
       }
     });
 
@@ -45,6 +51,13 @@ const MessageDisplay = ({ journeySection = 'moon-section', adminView = false }) 
     }
   };
 
+  // Expose refresh function to parent
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh(loadMessages);
+    }
+  }, [onRefresh]);
+
   const formatTime = (timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -68,6 +81,26 @@ const MessageDisplay = ({ journeySection = 'moon-section', adminView = false }) 
 
   const toggleMessages = () => {
     setShowMessages(!showMessages);
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    if (deletingMessage) return; // Prevent multiple deletes
+
+    // Confirmation dialog
+    if (!window.confirm('Bạn có chắc muốn xóa tin nhắn này không?')) {
+      return;
+    }
+
+    setDeletingMessage(messageId);
+    try {
+      await messageService.deleteMessage(messageId);
+      // Message will be removed from state via real-time subscription
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      alert('Không thể xóa tin nhắn. Vui lòng thử lại!');
+    } finally {
+      setDeletingMessage(null);
+    }
   };
 
   if (loading) {
@@ -150,11 +183,34 @@ const MessageDisplay = ({ journeySection = 'moon-section', adminView = false }) 
                               {message.sender_info?.name || 'Ẩn danh'}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Clock size={12} className="text-[#1A1033] opacity-50" />
-                            <span className="text-xs text-[#1A1033] opacity-60">
-                              {formatTime(message.created_at)}
-                            </span>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-1">
+                              <Clock size={12} className="text-[#1A1033] opacity-50" />
+                              <span className="text-xs text-[#1A1033] opacity-60">
+                                {formatTime(message.created_at)}
+                              </span>
+                            </div>
+                            {/* Delete Button */}
+                            <motion.button
+                              onClick={() => handleDeleteMessage(message.id)}
+                              disabled={deletingMessage === message.id}
+                              className="p-1 rounded-full hover:bg-red-500 hover:bg-opacity-20 transition-all group"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                            >
+                              {deletingMessage === message.id ? (
+                                <motion.div
+                                  animate={{ rotate: 360 }}
+                                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                                  className="w-3 h-3 border border-red-500 border-t-transparent rounded-full"
+                                />
+                              ) : (
+                                <Trash2
+                                  size={12}
+                                  className="text-[#1A1033] opacity-40 group-hover:text-red-500 group-hover:opacity-80 transition-all"
+                                />
+                              )}
+                            </motion.button>
                           </div>
                         </div>
 

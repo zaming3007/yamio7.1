@@ -4,8 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, Home, Leaf, Sun, Moon, Star, Heart } from 'lucide-react';
 import JourneyProgress from '../components/common/JourneyProgress';
 import CanvasStarfield from '../components/common/CanvasStarfield';
-import MessageForm from '../components/common/MessageForm';
-import MessageDisplay from '../components/common/MessageDisplay';
+import MessageSection from '../components/common/MessageSection';
 
 // Define icon styles with direct colors instead of gradients
 const iconStyles = {
@@ -188,7 +187,7 @@ const EmotionsSection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.375, 0.4, 0.51, 0.55],
+    [0.375, 0.4, 0.53, 0.58],
     [0, 1, 1, 0]
   );
 
@@ -272,12 +271,11 @@ const EmotionsSection = ({ progress }) => {
             Và anh cũng sẽ là người ở bên chứng kiến điều đó.
           </motion.div>
 
-          {/* Message Form - Emotions Section */}
-          <MessageForm
+          {/* Message Section - Emotions */}
+          <MessageSection
             journeySection="emotions-section"
             onFormStateChange={setIsFormOpen}
           />
-          <MessageDisplay journeySection="emotions-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -291,7 +289,7 @@ const SunSection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.1, 0.125, 0.26, 0.3],
+    [0.1, 0.125, 0.28, 0.33],
     [0, 1, 1, 0]
   );
 
@@ -378,12 +376,11 @@ const SunSection = ({ progress }) => {
             Mặt Trời trong nhà 4 nói rằng: em sống sâu, sống thật. Em cần sự ổn định – nhưng không phải sự ổn định từ bên ngoài. Em tìm kiếm một "ngôi nhà" từ bên trong: nơi em được thở đúng với mình, được sống đúng với những gì em cảm mà không phải chỉnh sửa nó cho vừa vặn với ai.
           </p>
 
-          {/* Message Form - Sun Section */}
-          <MessageForm
+          {/* Message Section - Sun */}
+          <MessageSection
             journeySection="sun-section"
             onFormStateChange={setIsFormOpen}
           />
-          <MessageDisplay journeySection="sun-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -398,7 +395,7 @@ const VenusSection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.625, 0.65, 0.76, 0.8],
+    [0.625, 0.65, 0.78, 0.83],
     [0, 1, 1, 0]
   );
 
@@ -486,12 +483,11 @@ const VenusSection = ({ progress }) => {
             Anh luôn ở đó, anh luôn là chỗ dựa cho em mà, anh vẫn thường nói cho em nghe về điều đó, em biết chứ? Anh muốn là chỗ để em dựa dẫm, như là gia đình vậyyy.
           </motion.div>
 
-          {/* Message Form - Venus Section */}
-          <MessageForm
+          {/* Message Section - Venus */}
+          <MessageSection
             journeySection="venus-section"
             onFormStateChange={setIsFormOpen}
           />
-          <MessageDisplay journeySection="venus-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -506,7 +502,7 @@ const LifePathSection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.75, 0.775, 0.89, 0.93],
+    [0.75, 0.775, 0.91, 0.96],
     [0, 1, 1, 0]
   );
 
@@ -579,12 +575,11 @@ const LifePathSection = ({ progress }) => {
             Anh nghĩ… tình yêu thực sự chỉ đến khi em không còn phải cố trở thành một “phiên bản tốt hơn” cho ai khác.
             Khi em được là chính mình – với tất cả sự mâu thuẫn, sâu sắc, nhạy cảm và lấp lánh của em – thì tình yêu mới thật sự bắt đầu.
             Anh cảm nhận điều đó trong em, anh xuất hiện để đưa em trở về lại, được yêu được sống, luôn tích cực lạc quan chứ không như quá khứ trước kia nữa.          </motion.div>
-          {/* Message Form - Life Path Section */}
-          <MessageForm
+          {/* Message Section - Life Path */}
+          <MessageSection
             journeySection="lifepath-section"
             onFormStateChange={setIsFormOpen}
           />
-          <MessageDisplay journeySection="lifepath-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -598,7 +593,7 @@ const MoonSection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.25, 0.275, 0.39, 0.43],
+    [0.25, 0.275, 0.41, 0.46],
     [0, 1, 1, 0]
   );
 
@@ -689,14 +684,11 @@ const MoonSection = ({ progress }) => {
             Ngược lại, anh thấy đó là lúc em đẹp nhất. Không cần kiểm soát, không cần "đúng mực". Chỉ cần được là em – và được cháy rực lên như chính em vốn thế.
           </motion.div>
 
-          {/* Message Form - Cho phép người đọc gửi lời nhắn */}
-          <MessageForm
+          {/* Message Section - Moon */}
+          <MessageSection
             journeySection="moon-section"
             onFormStateChange={setIsFormOpen}
           />
-
-          {/* Display Messages - Hiển thị tin nhắn đã gửi */}
-          <MessageDisplay journeySection="moon-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -710,7 +702,7 @@ const MercurySection = ({ progress }) => {
 
   const opacityValue = useTransform(
     progress,
-    [0.5, 0.525, 0.64, 0.68],
+    [0.5, 0.525, 0.66, 0.71],
     [0, 1, 1, 0]
   );
 
@@ -802,12 +794,11 @@ const MercurySection = ({ progress }) => {
             Anh nhìn thấy điều đó, và anh trân trọng nó – hơn cả những lời yêu thương bình thường đó.
           </motion.div>
 
-          {/* Message Form - Mercury Section */}
-          <MessageForm
+          {/* Message Section - Mercury */}
+          <MessageSection
             journeySection="mercury-section"
             onFormStateChange={setIsFormOpen}
           />
-          <MessageDisplay journeySection="mercury-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -818,6 +809,7 @@ const MercurySection = ({ progress }) => {
 const ConclusionSection = ({ progress, onJourneyComplete }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     if (isInView) {
@@ -865,7 +857,13 @@ const ConclusionSection = ({ progress, onJourneyComplete }) => {
           </p>
         </div>
 
-        <div className="flex justify-center space-x-4">
+        {/* Message Section - Conclusion */}
+        <MessageSection
+          journeySection="conclusion-section"
+          onFormStateChange={setIsFormOpen}
+        />
+
+        <div className="flex justify-center space-x-4 mt-8">
           <Link
             to="/"
             className="px-6 py-3 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center space-x-2 hover:bg-opacity-30 transition-all"

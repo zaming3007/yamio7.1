@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Star, BookOpen, ArrowRight, Heart, Camera, Link as LinkIcon, Archive } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
+import DailyAffirmation from '../components/common/DailyAffirmation';
 
 const HomePage = () => {
   // Define icon styles with direct colors instead of gradients
@@ -18,25 +19,25 @@ const HomePage = () => {
       path: '/planets',
       icon: <Star className={`text-4xl mb-3 ${iconStyles.planets}`} size={36} strokeWidth={1.5} />,
       title: 'Các Hành Tinh',
-      description: 'Tìm hiểu về ảnh hưởng của từng hành tinh lên tính cách của bạn',
+      description: 'Khám phá ảnh hưởng của các hành tinh lên tính cách của cả hai',
     },
     {
       path: '/personality',
       icon: <Camera className={`text-4xl mb-3 ${iconStyles.camera}`} size={36} strokeWidth={1.5} />,
       title: 'Love Look',
-      description: 'Yamin import cho Mio đó, gọi là tham khảo tr',
+      description: 'Không gian riêng tư để ngắm nhìn và yêu thương nhau',
     },
     {
-      path: '/insights',
+      path: '/couple-goals',
       icon: <LinkIcon className={`text-4xl mb-3 ${iconStyles.link}`} size={36} strokeWidth={1.5} />,
-      title: 'Kết Hợp',
-      description: 'Kết nối và khám phá sự tương thích giữa hai người',
+      title: 'Couple Goals',
+      description: 'Đặt mục tiêu chung và cùng nhau phấn đấu thực hiện',
     },
     {
-      path: '/archive',
+      path: '/memory-wall',
       icon: <Archive className={`text-4xl mb-3 ${iconStyles.archive}`} size={36} strokeWidth={1.5} />,
-      title: 'Lưu Trữ',
-      description: 'Lưu giữ những kỷ niệm đáng nhớ của hai người',
+      title: 'Memory Wall',
+      description: 'Lưu giữ những kỷ niệm đáng nhớ và câu chuyện tình yêu',
     },
   ];
 
@@ -71,8 +72,27 @@ const HomePage = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl md:text-4xl font-display font-bold mb-4 text-gradient">Văn Bảo Ngọc</h1>
-          <p className="text-overlay content-backdrop">Mio - 2/10/2002</p>
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+            <div className="text-center">
+              <h1 className="text-2xl md:text-3xl font-display font-bold mb-2 text-gradient">Phan Trần Gia Minh</h1>
+              <p className="text-overlay content-backdrop">Yamin - 30/07/2004</p>
+            </div>
+            <div className="flex items-center">
+              <Heart className="text-rose-500 mx-4" size={32} />
+            </div>
+            <div className="text-center">
+              <h1 className="text-2xl md:text-3xl font-display font-bold mb-2 text-gradient">Văn Bảo Ngọc</h1>
+              <p className="text-overlay content-backdrop">Mio - 02/10/2002</p>
+            </div>
+          </div>
+          <motion.p
+            className="text-center mt-6 text-[#1a1033] opacity-80 italic"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            "Không gian riêng của chúng mình" ✨
+          </motion.p>
         </motion.div>
 
         <motion.div
@@ -89,7 +109,7 @@ const HomePage = () => {
                   <h3 className="text-xl font-display text-[#1a1033]">Tình Yêu</h3>
                 </div>
                 <p className="text-[#1a1033] text-opacity-70 text-sm mb-4">
-                  Đếm ngày yêu nhau và những khoảnh khắc đáng nhớ
+                  Đếm ngày yêu nhau và lưu giữ những khoảnh khắc đáng nhớ của cả hai
                 </p>
               </div>
               <motion.div
@@ -135,6 +155,9 @@ const HomePage = () => {
           ))}
         </motion.div>
       </div>
+
+      {/* Daily Affirmation */}
+      <DailyAffirmation />
     </AnimatedRoute>
   );
 };

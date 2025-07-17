@@ -13,7 +13,7 @@ export const messageService = {
       .from('messages')
       .select('*')
       .order('created_at', { ascending: false })
-    
+
     if (error) throw error
     return data
   },
@@ -31,7 +31,7 @@ export const messageService = {
         }
       ])
       .select()
-    
+
     if (error) throw error
     return data[0]
   },
@@ -40,11 +40,26 @@ export const messageService = {
   subscribeToMessages(callback) {
     return supabase
       .channel('messages')
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        callback
+        (payload) => callback({ ...payload, eventType: 'INSERT' })
+      )
+      .on('postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'messages' },
+        (payload) => callback({ ...payload, eventType: 'DELETE' })
       )
       .subscribe()
+  },
+
+  // Delete a message
+  async deleteMessage(messageId) {
+    const { error } = await supabase
+      .from('messages')
+      .delete()
+      .eq('id', messageId)
+
+    if (error) throw error
+    return true
   },
 
   // Unsubscribe from real-time changes

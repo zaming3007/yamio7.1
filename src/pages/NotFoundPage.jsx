@@ -7,7 +7,7 @@ const NotFoundPage = () => {
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
       <EnhancedBackground intensity="medium" />
-      
+
       <div className="relative z-10 text-center max-w-lg px-6">
         {/* Animated 404 */}
         <motion.div
@@ -16,9 +16,9 @@ const NotFoundPage = () => {
           transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
           className="mb-8"
         >
-          <motion.h1 
+          <motion.h1
             className="text-8xl md:text-9xl font-bold text-[#1A1033] opacity-20 mb-4"
-            animate={{ 
+            animate={{
               textShadow: [
                 "0 0 20px rgba(26, 16, 51, 0.3)",
                 "0 0 40px rgba(26, 16, 51, 0.5)",
@@ -93,7 +93,7 @@ const NotFoundPage = () => {
               Có vẻ như bạn đã lạc vào một vùng không gian chưa được khám phá...
             </p>
             <p className="text-[#1A1033] opacity-80">
-              Đừng lo lắng, hãy quay về trang chủ để tiếp tục hành trình khám phá về Mio nhé! ✨
+              Đừng lo lắng, hãy quay về trang chủ để tiếp tục hành trình khám phá của chúng mình nhé! ✨
             </p>
           </div>
 
