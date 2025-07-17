@@ -14,8 +14,14 @@ import {
   Trash2
 } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
+import GlassCard from '../components/ui/GlassCard';
+import Button from '../components/ui/Button';
+import { useToast } from '../components/ui/Toast';
+import { designSystem, getPersonTheme } from '../styles/designSystem';
+import { getFeedbacks, createFeedback, likeFeedback, deleteFeedback } from '../services/api';
 
 const FeedbackPage = () => {
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('couple'); // 'couple' or 'system'
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState({
@@ -31,8 +37,8 @@ const FeedbackPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const persons = [
-    { id: 'giaminh', name: 'Gia Minh', emoji: '🦁', color: 'blue' },
-    { id: 'baongoc', name: 'Bảo Ngọc', emoji: '🌸', color: 'pink' }
+    { id: 'giaminh', ...getPersonTheme('giaminh') },
+    { id: 'baongoc', ...getPersonTheme('baongoc') }
   ];
 
   const categories = {
@@ -56,50 +62,71 @@ const FeedbackPage = () => {
     { id: 'high', label: 'Cao', color: 'red' }
   ];
 
-  // Load feedbacks from localStorage
+  // Load feedbacks from database
   useEffect(() => {
-    const savedFeedbacks = localStorage.getItem('couple-feedbacks');
-    if (savedFeedbacks) {
-      setFeedbacks(JSON.parse(savedFeedbacks));
-    }
-  }, []);
+    loadFeedbacks();
+  }, [activeTab]);
 
-  // Save feedbacks to localStorage
-  const saveFeedbacks = (updatedFeedbacks) => {
-    localStorage.setItem('couple-feedbacks', JSON.stringify(updatedFeedbacks));
-    setFeedbacks(updatedFeedbacks);
+  const loadFeedbacks = async () => {
+    try {
+      setLoading(true);
+      const data = await getFeedbacks({ type: activeTab });
+      setFeedbacks(data);
+    } catch (error) {
+      console.error('Error loading feedbacks:', error);
+      toast.error('Không thể tải feedbacks', {
+        title: 'Lỗi kết nối'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Remove saveFeedbacks function - using API now
 
   // Submit new feedback
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newFeedback.title.trim() || !newFeedback.content.trim()) return;
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const feedback = {
-      id: Date.now().toString(),
-      ...newFeedback,
-      timestamp: new Date().toISOString(),
-      status: 'open',
-      likes: 0,
-      replies: []
-    };
+      await createFeedback({
+        type: activeTab,
+        category: newFeedback.category,
+        title: newFeedback.title,
+        content: newFeedback.content,
+        author: newFeedback.author,
+        priority: newFeedback.priority
+      });
 
-    const updatedFeedbacks = [feedback, ...feedbacks];
-    saveFeedbacks(updatedFeedbacks);
+      // Show success toast
+      toast.success(
+        activeTab === 'couple' ? 'Góp ý đã được gửi thành công!' : 'Đề xuất đã được gửi thành công!',
+        { title: 'Thành công' }
+      );
 
-    // Reset form but keep current author
-    setNewFeedback(prev => ({
-      type: activeTab,
-      category: 'general',
-      title: '',
-      content: '',
-      author: prev.author, // Keep current selected author
-      priority: 'medium'
-    }));
+      // Reset form but keep current author
+      setNewFeedback(prev => ({
+        type: activeTab,
+        category: 'general',
+        title: '',
+        content: '',
+        author: prev.author, // Keep current selected author
+        priority: 'medium'
+      }));
 
-    setLoading(false);
+      // Reload feedbacks
+      await loadFeedbacks();
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      toast.error('Không thể gửi feedback', {
+        title: 'Lỗi gửi'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Filter feedbacks
@@ -112,20 +139,35 @@ const FeedbackPage = () => {
   });
 
   // Like feedback
-  const handleLike = (feedbackId) => {
-    const updatedFeedbacks = feedbacks.map(feedback =>
-      feedback.id === feedbackId
-        ? { ...feedback, likes: feedback.likes + 1 }
-        : feedback
-    );
-    saveFeedbacks(updatedFeedbacks);
+  const handleLike = async (feedbackId) => {
+    try {
+      await likeFeedback(feedbackId);
+
+      // Update local state
+      setFeedbacks(prev => prev.map(feedback =>
+        feedback.feedback_id === feedbackId
+          ? { ...feedback, likes: feedback.likes + 1 }
+          : feedback
+      ));
+    } catch (error) {
+      console.error('Error liking feedback:', error);
+      toast.error('Không thể like feedback');
+    }
   };
 
   // Delete feedback
-  const handleDelete = (feedbackId) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa feedback này?')) {
-      const updatedFeedbacks = feedbacks.filter(feedback => feedback.id !== feedbackId);
-      saveFeedbacks(updatedFeedbacks);
+  const handleDelete = async (feedbackId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa feedback này?')) return;
+
+    try {
+      await deleteFeedback(feedbackId);
+      toast.success('Feedback đã được xóa');
+
+      // Remove from local state
+      setFeedbacks(prev => prev.filter(feedback => feedback.feedback_id !== feedbackId));
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      toast.error('Không thể xóa feedback');
     }
   };
 
@@ -235,7 +277,7 @@ const FeedbackPage = () => {
             transition={{ delay: 0.3 }}
             className="lg:col-span-1"
           >
-            <div className="glassmorphism-card p-6 sticky top-8">
+            <GlassCard variant="heavy" shadow="xl" className="p-6 sticky top-8">
               <h3 className="text-xl font-bold text-[#1a1033] mb-6 flex items-center">
                 <Plus size={20} className="mr-2" />
                 {activeTab === 'couple' ? 'Góp ý mới' : 'Đề xuất mới'}
@@ -332,27 +374,20 @@ const FeedbackPage = () => {
                 </div>
 
                 {/* Submit Button */}
-                <motion.button
+                <Button
                   type="submit"
-                  disabled={loading || !newFeedback.title.trim() || !newFeedback.content.trim()}
-                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-400 to-pink-400 text-white rounded-lg font-medium hover:from-blue-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  variant="primary"
+                  size="lg"
+                  personTheme="couple"
+                  disabled={!newFeedback.title.trim() || !newFeedback.content.trim()}
+                  loading={loading}
+                  className="w-full"
                 >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Đang gửi...
-                    </div>
-                  ) : (
-                    <>
-                      <Send size={16} className="inline mr-2" />
-                      Gửi {activeTab === 'couple' ? 'góp ý' : 'đề xuất'}
-                    </>
-                  )}
-                </motion.button>
+                  <Send size={16} />
+                  Gửi {activeTab === 'couple' ? 'góp ý' : 'đề xuất'}
+                </Button>
               </form>
-            </div>
+            </GlassCard>
           </motion.div>
 
           {/* Feedback List */}
@@ -388,14 +423,17 @@ const FeedbackPage = () => {
                     const priority = getPriorityInfo(feedback.priority);
 
                     return (
-                      <motion.div
+                      <GlassCard
                         key={feedback.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="glassmorphism-card p-6 hover:shadow-lg transition-all duration-300"
-                        whileHover={{ scale: 1.01 }}
+                        variant="medium"
+                        shadow="lg"
+                        className="p-6"
+                        motionProps={{
+                          initial: { opacity: 0, y: 20 },
+                          animate: { opacity: 1, y: 0 },
+                          exit: { opacity: 0, y: -20 },
+                          transition: { delay: index * 0.1 }
+                        }}
                       >
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
@@ -423,8 +461,8 @@ const FeedbackPage = () => {
                               </div>
                               <div className="flex items-center space-x-2 text-xs text-[#1a1033] opacity-60 mt-1">
                                 <Calendar size={12} />
-                                <span>{new Date(feedback.timestamp).toLocaleDateString('vi-VN')}</span>
-                                <span>{new Date(feedback.timestamp).toLocaleTimeString('vi-VN', {
+                                <span>{new Date(feedback.created_at).toLocaleDateString('vi-VN')}</span>
+                                <span>{new Date(feedback.created_at).toLocaleTimeString('vi-VN', {
                                   hour: '2-digit',
                                   minute: '2-digit'
                                 })}</span>
@@ -436,7 +474,7 @@ const FeedbackPage = () => {
                           <div className="flex items-center space-x-2">
                             {/* Like Button */}
                             <motion.button
-                              onClick={() => handleLike(feedback.id)}
+                              onClick={() => handleLike(feedback.feedback_id)}
                               className="flex items-center space-x-1 px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-all"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -450,7 +488,7 @@ const FeedbackPage = () => {
 
                             {/* Delete Button */}
                             <motion.button
-                              onClick={() => handleDelete(feedback.id)}
+                              onClick={() => handleDelete(feedback.feedback_id)}
                               className="p-2 rounded-full bg-red-100/20 hover:bg-red-200/30 transition-all"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
@@ -487,7 +525,7 @@ const FeedbackPage = () => {
                             </span>
                           )}
                         </div>
-                      </motion.div>
+                      </GlassCard>
                     );
                   })}
                 </AnimatePresence>

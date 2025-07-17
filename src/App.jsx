@@ -17,6 +17,7 @@ import CoupleGoalsPage from './pages/CoupleGoalsPage';
 import WeatherTrackerPage from './pages/WeatherTrackerPage';
 import FeedbackPage from './pages/FeedbackPage';
 import EnhancedBackground from './components/common/EnhancedBackground';
+import { ToastProvider } from './components/ui/Toast';
 
 // ScrollToTop component to ensure page scrolls to top on route changes
 const ScrollToTop = () => {
@@ -160,9 +161,11 @@ function App() {
 const AppWithRouter = () => {
   return (
     <AuthProvider>
-      <Router>
-        <App />
-      </Router>
+      <ToastProvider>
+        <Router>
+          <App />
+        </Router>
+      </ToastProvider>
     </AuthProvider>
   );
 };

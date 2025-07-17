@@ -1,21 +1,27 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Heart, Calendar, MapPin, Camera, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, Heart, Calendar, MapPin, Camera, Edit, Trash2, Save, X, Upload } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
-import { messageService } from '../lib/supabase';
+import GlassCard from '../components/ui/GlassCard';
+import Button from '../components/ui/Button';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { useToast } from '../components/ui/Toast';
+import { getMemoryPhotos, uploadMemoryPhoto, deleteMemoryPhoto } from '../services/api';
 
 const MemoryWallPage = () => {
+  const { toast } = useToast();
   const [memories, setMemories] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingMemory, setEditingMemory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [newMemory, setNewMemory] = useState({
     title: '',
     description: '',
-    date: '',
+    uploaded_by: 'giaminh', // Default uploader
+    tags: [],
     location: '',
-    image: null,
-    mood: '😊'
+    file: null
   });
 
   const moods = ['😊', '🥰', '😍', '🤗', '😘', '💕', '🌟', '✨', '🎉', '🎈', '🌹', '🦋'];
@@ -27,86 +33,94 @@ const MemoryWallPage = () => {
   const loadMemories = async () => {
     try {
       setLoading(true);
-      // Using messages table with a special journey_section for memories
-      const data = await messageService.getMessages();
-      const memoryData = data
-        .filter(msg => msg.journey_section === 'memory-wall')
-        .map(msg => ({
-          id: msg.id,
-          ...JSON.parse(msg.content),
-          created_at: msg.created_at
-        }));
-      setMemories(memoryData);
+      const photos = await getMemoryPhotos();
+      setMemories(photos);
     } catch (error) {
       console.error('Error loading memories:', error);
+      toast.error('Không thể tải ảnh kỷ niệm', {
+        title: 'Lỗi kết nối'
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const saveMemory = async () => {
-    if (!newMemory.title.trim()) return;
+    if (!newMemory.title.trim() || !newMemory.file) {
+      toast.warning('Vui lòng nhập tiêu đề và chọn ảnh');
+      return;
+    }
 
     try {
-      const memoryData = {
-        ...newMemory,
-        id: Date.now(),
-        created_at: new Date().toISOString()
-      };
+      setUploading(true);
 
-      await messageService.addMessage(
-        JSON.stringify(memoryData),
-        { name: 'Memory System', timestamp: new Date().toISOString() },
-        'memory-wall'
-      );
+      const result = await uploadMemoryPhoto({
+        title: newMemory.title,
+        description: newMemory.description,
+        uploaded_by: newMemory.uploaded_by,
+        tags: newMemory.tags,
+        location: newMemory.location,
+        file: newMemory.file
+      });
 
-      setMemories(prev => [memoryData, ...prev]);
-      setNewMemory({ title: '', description: '', date: '', location: '', image: null, mood: '😊' });
+      toast.success('Ảnh kỷ niệm đã được thêm thành công!');
+
+      // Reload memories to get the new photo
+      await loadMemories();
+
+      // Reset form
+      setNewMemory({
+        title: '',
+        description: '',
+        uploaded_by: 'giaminh',
+        tags: [],
+        location: '',
+        file: null
+      });
       setShowAddForm(false);
     } catch (error) {
       console.error('Error saving memory:', error);
+      toast.error('Không thể thêm ảnh kỷ niệm', {
+        title: 'Lỗi upload'
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
-  const deleteMemory = async (memoryId) => {
+  const handleDeleteMemory = async (photoId) => {
     if (!window.confirm('Bạn có chắc muốn xóa kỷ niệm này không?')) return;
 
     try {
-      // Find the message ID that contains this memory
-      const allMessages = await messageService.getMessages();
-      const messageToDelete = allMessages.find(msg => {
-        if (msg.journey_section === 'memory-wall') {
-          try {
-            const memoryData = JSON.parse(msg.content);
-            return memoryData.id === memoryId;
-          } catch {
-            return false;
-          }
-        }
-        return false;
-      });
+      await deleteMemoryPhoto(photoId);
+      toast.success('Ảnh kỷ niệm đã được xóa');
 
-      if (messageToDelete) {
-        await messageService.deleteMessage(messageToDelete.id);
-        setMemories(prev => prev.filter(memory => memory.id !== memoryId));
-      }
+      // Remove from local state
+      setMemories(prev => prev.filter(memory => memory.photo_id !== photoId));
     } catch (error) {
       console.error('Error deleting memory:', error);
+      toast.error('Không thể xóa ảnh kỷ niệm', {
+        title: 'Lỗi xóa'
+      });
     }
   };
 
-  const handleImageUpload = (event, isEditing = false) => {
+  const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (isEditing) {
-          setEditingMemory(prev => ({ ...prev, image: e.target.result }));
-        } else {
-          setNewMemory(prev => ({ ...prev, image: e.target.result }));
-        }
-      };
-      reader.readAsDataURL(file);
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Vui lòng chọn file ảnh hợp lệ');
+        return;
+      }
+
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('File ảnh quá lớn. Vui lòng chọn file nhỏ hơn 10MB');
+        return;
+      }
+
+      setNewMemory(prev => ({ ...prev, file }));
     }
   };
 
@@ -114,10 +128,11 @@ const MemoryWallPage = () => {
     return (
       <AnimatedRoute>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-[#1A1033] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-[#1A1033] opacity-70">Đang tải kỷ niệm...</p>
-          </div>
+          <LoadingSpinner
+            size="xl"
+            color="purple"
+            text="Đang tải kỷ niệm..."
+          />
         </div>
       </AnimatedRoute>
     );
@@ -181,8 +196,8 @@ const MemoryWallPage = () => {
                 {/* Memory Image */}
                 {memory.image && (
                   <div className="w-full h-48 rounded-xl overflow-hidden mb-4">
-                    <img 
-                      src={memory.image} 
+                    <img
+                      src={memory.image}
                       alt={memory.title}
                       className="w-full h-full object-cover"
                     />
@@ -286,11 +301,10 @@ const MemoryWallPage = () => {
                         <button
                           key={mood}
                           onClick={() => setNewMemory(prev => ({ ...prev, mood }))}
-                          className={`text-2xl p-2 rounded-lg transition-all ${
-                            newMemory.mood === mood 
-                              ? 'bg-white bg-opacity-30 scale-110' 
-                              : 'hover:bg-white hover:bg-opacity-20'
-                          }`}
+                          className={`text-2xl p-2 rounded-lg transition-all ${newMemory.mood === mood
+                            ? 'bg-white bg-opacity-30 scale-110'
+                            : 'hover:bg-white hover:bg-opacity-20'
+                            }`}
                         >
                           {mood}
                         </button>

@@ -17,8 +17,15 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import AnimatedRoute from '../components/common/AnimatedRoute';
+import GlassCard from '../components/ui/GlassCard';
+import Button from '../components/ui/Button';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { useToast } from '../components/ui/Toast';
+import { designSystem, getPersonTheme } from '../styles/designSystem';
 
 const WeatherTrackerPage = () => {
+  const { toast } = useToast();
+
   const [weatherData, setWeatherData] = useState({
     giaminh: null,
     baongoc: null
@@ -92,23 +99,11 @@ const WeatherTrackerPage = () => {
   const persons = [
     {
       id: 'giaminh',
-      name: 'Gia Minh',
-      emoji: '🦁',
-      gradient: 'from-blue-300 via-blue-200 to-blue-400',
-      bgGradient: 'from-blue-100/15 via-blue-50/10 to-blue-200/15',
-      liquidGradient: 'from-blue-200/20 via-blue-100/15 to-blue-300/20',
-      glowColor: 'shadow-blue-200/20',
-      borderGradient: 'from-blue-200/25 to-blue-300/25'
+      ...getPersonTheme('giaminh')
     },
     {
       id: 'baongoc',
-      name: 'Bảo Ngọc',
-      emoji: '🌸',
-      gradient: 'from-pink-300 via-pink-200 to-pink-400',
-      bgGradient: 'from-pink-100/15 via-pink-50/10 to-pink-200/15',
-      liquidGradient: 'from-pink-200/20 via-pink-100/15 to-pink-300/20',
-      glowColor: 'shadow-pink-200/20',
-      borderGradient: 'from-pink-200/25 to-pink-300/25'
+      ...getPersonTheme('baongoc')
     }
   ];
 
@@ -181,6 +176,9 @@ const WeatherTrackerPage = () => {
     } catch (error) {
       console.error('Error fetching weather by location:', error);
       setError(error.message);
+      toast.error('Không thể lấy dữ liệu thời tiết', {
+        title: 'Lỗi kết nối'
+      });
       setLoading(prev => ({ ...prev, [personId]: false }));
     }
   };
@@ -785,22 +783,16 @@ const WeatherTrackerPage = () => {
 
 
           {/* Refresh Button */}
-          <motion.button
+          <Button
             onClick={refreshWeather}
-            className="px-6 py-3 rounded-2xl backdrop-blur-xl bg-gradient-to-r from-emerald-200/15 to-emerald-300/15 border border-white/20 flex items-center space-x-2 shadow-sm"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 8px 25px rgba(16, 185, 129, 0.15)"
-            }}
-            whileTap={{ scale: 0.95 }}
+            variant="glass"
+            size="md"
             disabled={loading.giaminh || loading.baongoc}
+            loading={loading.giaminh || loading.baongoc}
           >
-            <RefreshCw
-              className={`text-emerald-500 ${(loading.giaminh || loading.baongoc) ? 'animate-spin' : ''}`}
-              size={20}
-            />
-            <span className="text-[#1a1033] font-semibold">Cập nhật</span>
-          </motion.button>
+            <RefreshCw size={20} />
+            Cập nhật
+          </Button>
 
           {/* Last Update */}
           <motion.div
@@ -864,23 +856,28 @@ const WeatherTrackerPage = () => {
             const isLoading = loading[person.id];
 
             return (
-              <motion.div
+              <GlassCard
                 key={person.id}
-                initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                className={`relative overflow-hidden rounded-3xl backdrop-blur-xl bg-white/10 border border-white/20 ${person.glowColor} shadow-2xl`}
-                whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+                variant="heavy"
+                shadow="2xl"
+                glowColor={person.id === 'giaminh' ? 'blue' : 'pink'}
+                className="relative overflow-hidden"
+                motionProps={{
+                  initial: { opacity: 0, x: index === 0 ? -20 : 20 },
+                  animate: { opacity: 1, x: 0 },
+                  transition: { delay: 0.4 + index * 0.1 }
                 }}
               >
                 {/* Liquid Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${person.liquidGradient} opacity-60`} />
+                <div
+                  className="absolute inset-0 opacity-40"
+                  style={{ background: person.gradient.soft }}
+                />
 
                 {/* Animated liquid blobs */}
                 <motion.div
-                  className={`absolute -top-10 -left-10 w-32 h-32 bg-gradient-to-br ${person.borderGradient} rounded-full blur-xl opacity-30`}
+                  className="absolute -top-10 -left-10 w-32 h-32 rounded-full blur-xl opacity-20"
+                  style={{ background: person.gradient.glow }}
                   animate={{
                     x: [0, 20, -20, 0],
                     y: [0, -20, 20, 0],
@@ -893,7 +890,8 @@ const WeatherTrackerPage = () => {
                   }}
                 />
                 <motion.div
-                  className={`absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br ${person.borderGradient} rounded-full blur-xl opacity-20`}
+                  className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full blur-xl opacity-15"
+                  style={{ background: person.gradient.primary }}
                   animate={{
                     x: [0, -30, 30, 0],
                     y: [0, 30, -30, 0],
@@ -908,7 +906,7 @@ const WeatherTrackerPage = () => {
                 />
 
                 {/* Glass overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
 
                 {/* Content wrapper */}
                 <div className="relative z-10 p-6">
@@ -987,7 +985,7 @@ const WeatherTrackerPage = () => {
                             type="text"
                             value={searchQuery[person.id]}
                             onChange={(e) => handleSearchChange(person.id, e.target.value)}
-                            onKeyPress={(e) => {
+                            onKeyDown={(e) => {
                               if (e.key === 'Enter' && searchQuery[person.id].trim()) {
                                 const suggestions = filterDistricts(searchQuery[person.id]);
                                 if (suggestions.length > 0) {
@@ -1237,7 +1235,7 @@ const WeatherTrackerPage = () => {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </GlassCard>
             );
           })}
         </div>
