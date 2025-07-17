@@ -1,0 +1,12 @@
+Dùng <iframe> để nhúng trực tiếp
+Bạn có thể nhúng trang đó vào website bằng cách chèn đoạn HTML này:
+
+html
+Copy
+Edit
+<iframe 
+  src="https://taoanhdep.com/love/?b=eyJ0IjpbIk1pbyBDxrBuZyBj4bunYSBhbmtrayIsIllhbWluIHnDqnUgTWlvIiwiTWlvIGPDsyB5w6p1IGFuaCBoxINtPyIsIlnDqnV1dXUiLCJNaW8gTmdvYW4gbmjDqWUiLCJOaOG7myBlbSBxdcOhYWFhIiwiTcOqIGVtIG7hu69hYWFhYWFhYWEiXSwiYSI6InBtIn0=" 
+  width="100%" 
+  height="600" 
+  style="border:none;">
+</iframe>
