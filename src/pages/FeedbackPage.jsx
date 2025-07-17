@@ -18,7 +18,7 @@ import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import { useToast } from '../components/ui/Toast';
 import { designSystem, getPersonTheme } from '../styles/designSystem';
-import { getFeedbacks, createFeedback, likeFeedback, deleteFeedback } from '../services/api';
+import { getFeedbacks, createFeedback, likeFeedback, deleteFeedback } from '../services/supabaseApi';
 
 const FeedbackPage = () => {
   const { toast } = useToast();

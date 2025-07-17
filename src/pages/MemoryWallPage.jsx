@@ -6,7 +6,7 @@ import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useToast } from '../components/ui/Toast';
-import { getMemoryPhotos, uploadMemoryPhoto, deleteMemoryPhoto } from '../services/api';
+import { getMemoryPhotos, uploadMemoryPhoto, deleteMemoryPhoto } from '../services/supabaseApi';
 
 const MemoryWallPage = () => {
   const { toast } = useToast();
@@ -185,7 +185,7 @@ const MemoryWallPage = () => {
           <AnimatePresence>
             {memories.map((memory, index) => (
               <motion.div
-                key={memory.id}
+                key={memory.photo_id || memory.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -194,10 +194,10 @@ const MemoryWallPage = () => {
                 whileHover={{ y: -5 }}
               >
                 {/* Memory Image */}
-                {memory.image && (
+                {memory.image_url && (
                   <div className="w-full h-48 rounded-xl overflow-hidden mb-4">
                     <img
-                      src={memory.image}
+                      src={memory.image_url}
                       alt={memory.title}
                       className="w-full h-full object-cover"
                     />
@@ -208,18 +208,12 @@ const MemoryWallPage = () => {
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
                     <h3 className="text-lg font-bold text-[#1a1033] flex items-center">
-                      <span className="mr-2 text-xl">{memory.mood}</span>
+                      <span className="mr-2 text-xl">📸</span>
                       {memory.title}
                     </h3>
                     <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        onClick={() => setEditingMemory(memory)}
-                        className="p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-all"
-                      >
-                        <Edit size={14} className="text-[#1a1033] opacity-60" />
-                      </button>
-                      <button
-                        onClick={() => deleteMemory(memory.id)}
+                        onClick={() => handleDeleteMemory(memory.photo_id)}
                         className="p-1 rounded-full hover:bg-red-500 hover:bg-opacity-20 transition-all"
                       >
                         <Trash2 size={14} className="text-red-500 opacity-60" />
@@ -234,18 +228,19 @@ const MemoryWallPage = () => {
                   )}
 
                   <div className="flex flex-wrap gap-2 text-xs">
-                    {memory.date && (
-                      <div className="flex items-center space-x-1 text-[#1a1033] opacity-60">
-                        <Calendar size={12} />
-                        <span>{new Date(memory.date).toLocaleDateString('vi-VN')}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center space-x-1 text-[#1a1033] opacity-60">
+                      <Calendar size={12} />
+                      <span>{new Date(memory.upload_date || memory.created_at).toLocaleDateString('vi-VN')}</span>
+                    </div>
                     {memory.location && (
                       <div className="flex items-center space-x-1 text-[#1a1033] opacity-60">
                         <MapPin size={12} />
                         <span>{memory.location}</span>
                       </div>
                     )}
+                    <div className="flex items-center space-x-1 text-[#1a1033] opacity-60">
+                      <span>👤 {memory.uploaded_by === 'giaminh' ? '🦁 Gia Minh' : '🌸 Bảo Ngọc'}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -291,24 +286,34 @@ const MemoryWallPage = () => {
                 </h3>
 
                 <div className="space-y-4">
-                  {/* Mood Selector */}
+                  {/* Person Selector */}
                   <div>
                     <label className="block text-sm font-medium text-[#1a1033] opacity-80 mb-2">
-                      Tâm trạng
+                      Người upload
                     </label>
-                    <div className="grid grid-cols-6 gap-2">
-                      {moods.map(mood => (
-                        <button
-                          key={mood}
-                          onClick={() => setNewMemory(prev => ({ ...prev, mood }))}
-                          className={`text-2xl p-2 rounded-lg transition-all ${newMemory.mood === mood
-                            ? 'bg-white bg-opacity-30 scale-110'
-                            : 'hover:bg-white hover:bg-opacity-20'
-                            }`}
-                        >
-                          {mood}
-                        </button>
-                      ))}
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => setNewMemory(prev => ({ ...prev, uploaded_by: 'giaminh' }))}
+                        className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border transition-all ${newMemory.uploaded_by === 'giaminh'
+                            ? 'bg-blue-200/30 border-blue-300 text-blue-700'
+                            : 'bg-white/10 border-white/20 text-[#1a1033] hover:bg-white/20'
+                          }`}
+                      >
+                        <span>🦁</span>
+                        <span>Gia Minh</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNewMemory(prev => ({ ...prev, uploaded_by: 'baongoc' }))}
+                        className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border transition-all ${newMemory.uploaded_by === 'baongoc'
+                            ? 'bg-pink-200/30 border-pink-300 text-pink-700'
+                            : 'bg-white/10 border-white/20 text-[#1a1033] hover:bg-white/20'
+                          }`}
+                      >
+                        <span>🌸</span>
+                        <span>Bảo Ngọc</span>
+                      </button>
                     </div>
                   </div>
 
