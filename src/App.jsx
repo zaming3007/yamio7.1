@@ -8,16 +8,18 @@ import HomePage from './pages/HomePage';
 import PlanetsPage from './pages/PlanetsPage';
 import JourneyPage from './pages/JourneyPage';
 import LoveTimerPage from './pages/LoveTimerPage';
+import AdminMessagesPage from './pages/AdminMessagesPage';
+import NotFoundPage from './pages/NotFoundPage';
 import EnhancedBackground from './components/common/EnhancedBackground';
 
 // ScrollToTop component to ensure page scrolls to top on route changes
 const ScrollToTop = () => {
   const { pathname } = useLocation();
-  
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  
+
   return null;
 };
 
@@ -26,10 +28,10 @@ const PersonalityPage = () => (
   <div className="flex flex-col h-screen pt-16 pb-16">
     <div className="flex-grow relative">
       <div className="absolute inset-0" style={{ zIndex: 10 }}>
-        <iframe 
-          src="https://taoanhdep.com/love/?b=eyJ0IjpbIk1pbyB4aW5oIHF1w7NvbyIsIk1pbyB4aW5oIMSR4bq5cHAiLCJBbmggbmjhu5sgZW1tbW0iLCJBbmggecOqdSBlbSIsIllhbWluIGl1dXUgTWlvb28iLCJNdeG7kW4gw7RtIGVtbSIsIkkgbWlzcyB1Il0sImEiOiJwbSJ9" 
-          width="100%" 
-          height="100%" 
+        <iframe
+          src="https://taoanhdep.com/love/?b=eyJ0IjpbIk1pbyB4aW5oIHF1w7NvbyIsIk1pbyB4aW5oIMSR4bq5cHAiLCJBbmggbmjhu5sgZW1tbW0iLCJBbmggecOqdSBlbSIsIllhbWluIGl1dXUgTWlvb28iLCJNdeG7kW4gw7RtIGVtbSIsIkkgbWlzcyB1Il0sImEiOiJwbSJ9"
+          width="100%"
+          height="100%"
           style={{
             border: 'none',
             marginTop: '-200px', // Điều chỉnh để chỉ hiển thị tên "Văn Bảo Ngọc"
@@ -63,7 +65,7 @@ const ArchivePage = () => (
 // Wrapper component để handle location changes
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -74,6 +76,8 @@ const AnimatedRoutes = () => {
         <Route path="/insights" element={<CombinePage />} />
         <Route path="/archive" element={<ArchivePage />} />
         <Route path="/love-timer" element={<LoveTimerPage />} />
+        <Route path="/admin/messages" element={<AdminMessagesPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
   );
@@ -85,7 +89,7 @@ function App() {
   const [showFooter, setShowFooter] = useState(true);
   const [showBackground, setShowBackground] = useState(true);
   const location = useLocation();
-  
+
   useEffect(() => {
     // Hide navigation, header, footer and custom background on the journey page
     if (location.pathname === '/journey') {
@@ -103,20 +107,20 @@ function App() {
       }, 0);
     }
   }, [location.pathname]);
-  
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Add ScrollToTop component to handle scrolling on route changes */}
       <ScrollToTop />
-      
+
       {showBackground && <EnhancedBackground intensity="medium" />}
-      
+
       {showHeader && <Header />}
-      
+
       <main>
         <AnimatedRoutes />
       </main>
-      
+
       {showNavigation && <Navigation />}
       {showFooter && <Footer />}
     </div>

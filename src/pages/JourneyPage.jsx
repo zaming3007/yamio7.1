@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ChevronDown, Home, Leaf, Sun, Moon, Star, Heart } from 'lucide-react';
 import JourneyProgress from '../components/common/JourneyProgress';
 import CanvasStarfield from '../components/common/CanvasStarfield';
+import MessageForm from '../components/common/MessageForm';
+import MessageDisplay from '../components/common/MessageDisplay';
 
 // Define icon styles with direct colors instead of gradients
 const iconStyles = {
@@ -182,12 +184,16 @@ const IntroSection = ({ progress }) => {
 const EmotionsSection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.375, 0.4, 0.475, 0.5],
+    [0.375, 0.4, 0.51, 0.55],
     [0, 1, 1, 0]
   );
+
+  // Override opacity when form is open
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -195,7 +201,7 @@ const EmotionsSection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -265,6 +271,13 @@ const EmotionsSection = ({ progress }) => {
             Mà vì em đang dần tin rằng: cảm xúc của mình cũng xứng đáng được hiện diện.
             Và anh cũng sẽ là người ở bên chứng kiến điều đó.
           </motion.div>
+
+          {/* Message Form - Emotions Section */}
+          <MessageForm
+            journeySection="emotions-section"
+            onFormStateChange={setIsFormOpen}
+          />
+          <MessageDisplay journeySection="emotions-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -274,12 +287,15 @@ const EmotionsSection = ({ progress }) => {
 const SunSection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.1, 0.125, 0.2, 0.25],
+    [0.1, 0.125, 0.26, 0.3],
     [0, 1, 1, 0]
   );
+
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -287,7 +303,7 @@ const SunSection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -361,6 +377,13 @@ const SunSection = ({ progress }) => {
             Nhưng em không phải là người dễ dàng.
             Mặt Trời trong nhà 4 nói rằng: em sống sâu, sống thật. Em cần sự ổn định – nhưng không phải sự ổn định từ bên ngoài. Em tìm kiếm một "ngôi nhà" từ bên trong: nơi em được thở đúng với mình, được sống đúng với những gì em cảm mà không phải chỉnh sửa nó cho vừa vặn với ai.
           </p>
+
+          {/* Message Form - Sun Section */}
+          <MessageForm
+            journeySection="sun-section"
+            onFormStateChange={setIsFormOpen}
+          />
+          <MessageDisplay journeySection="sun-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -371,12 +394,15 @@ const SunSection = ({ progress }) => {
 const VenusSection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.625, 0.65, 0.725, 0.75],
+    [0.625, 0.65, 0.76, 0.8],
     [0, 1, 1, 0]
   );
+
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -384,7 +410,7 @@ const VenusSection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -457,7 +483,15 @@ const VenusSection = ({ progress }) => {
             Anh biết, em cần một nơi – không phải để chạy trốn, mà để trở về.
             Một không gian không có vai diễn, không có ánh mắt dò xét, không cần phải “đúng mực” hay “đủ tốt”.
             Ở đó, em chỉ cần thở. Chỉ cần hiện diện – là đủ.
-            Anh luôn ở đó, anh luôn là chỗ dựa cho em mà, anh vẫn thường nói cho em nghe về điều đó, em biết chứ? Anh muốn là chỗ để em dựa dẫm, như là gia đình vậyyy.          </motion.div>
+            Anh luôn ở đó, anh luôn là chỗ dựa cho em mà, anh vẫn thường nói cho em nghe về điều đó, em biết chứ? Anh muốn là chỗ để em dựa dẫm, như là gia đình vậyyy.
+          </motion.div>
+
+          {/* Message Form - Venus Section */}
+          <MessageForm
+            journeySection="venus-section"
+            onFormStateChange={setIsFormOpen}
+          />
+          <MessageDisplay journeySection="venus-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -468,12 +502,15 @@ const VenusSection = ({ progress }) => {
 const LifePathSection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.75, 0.775, 0.85, 0.875],
+    [0.75, 0.775, 0.89, 0.93],
     [0, 1, 1, 0]
   );
+
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -481,7 +518,7 @@ const LifePathSection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -542,6 +579,12 @@ const LifePathSection = ({ progress }) => {
             Anh nghĩ… tình yêu thực sự chỉ đến khi em không còn phải cố trở thành một “phiên bản tốt hơn” cho ai khác.
             Khi em được là chính mình – với tất cả sự mâu thuẫn, sâu sắc, nhạy cảm và lấp lánh của em – thì tình yêu mới thật sự bắt đầu.
             Anh cảm nhận điều đó trong em, anh xuất hiện để đưa em trở về lại, được yêu được sống, luôn tích cực lạc quan chứ không như quá khứ trước kia nữa.          </motion.div>
+          {/* Message Form - Life Path Section */}
+          <MessageForm
+            journeySection="lifepath-section"
+            onFormStateChange={setIsFormOpen}
+          />
+          <MessageDisplay journeySection="lifepath-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -551,12 +594,15 @@ const LifePathSection = ({ progress }) => {
 const MoonSection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.25, 0.275, 0.35, 0.375],
+    [0.25, 0.275, 0.39, 0.43],
     [0, 1, 1, 0]
   );
+
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -564,7 +610,7 @@ const MoonSection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -640,7 +686,17 @@ const MoonSection = ({ progress }) => {
 
             Mỗi khi em thấy an toàn, em bộc lộ hết – không ngần ngại, không chỉnh sửa. Có thể hơi "ồn ào", có thể nhiều năng lượng đến mức "quá tay" một chút, nhưng anh chưa từng nghĩ đó là quá nhiều.
 
-            Ngược lại, anh thấy đó là lúc em đẹp nhất. Không cần kiểm soát, không cần "đúng mực". Chỉ cần được là em – và được cháy rực lên như chính em vốn thế.          </motion.div>
+            Ngược lại, anh thấy đó là lúc em đẹp nhất. Không cần kiểm soát, không cần "đúng mực". Chỉ cần được là em – và được cháy rực lên như chính em vốn thế.
+          </motion.div>
+
+          {/* Message Form - Cho phép người đọc gửi lời nhắn */}
+          <MessageForm
+            journeySection="moon-section"
+            onFormStateChange={setIsFormOpen}
+          />
+
+          {/* Display Messages - Hiển thị tin nhắn đã gửi */}
+          <MessageDisplay journeySection="moon-section" />
         </motion.div>
       </motion.div>
     </section>
@@ -650,12 +706,15 @@ const MoonSection = ({ progress }) => {
 const MercurySection = ({ progress }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.5 });
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const opacityValue = useTransform(
     progress,
-    [0.5, 0.525, 0.6, 0.625],
+    [0.5, 0.525, 0.64, 0.68],
     [0, 1, 1, 0]
   );
+
+  const finalOpacity = isFormOpen ? 1 : opacityValue;
 
   return (
     <section className="min-h-screen flex items-center justify-center relative py-20">
@@ -663,7 +722,7 @@ const MercurySection = ({ progress }) => {
         ref={ref}
         className="max-w-lg px-6 relative z-10 rounded-xl border border-white border-opacity-10 bg-white bg-opacity-20 backdrop-blur-sm"
         initial={{ opacity: 0 }}
-        style={{ opacity: opacityValue }}
+        style={{ opacity: finalOpacity }}
       >
         <motion.div
           className="text-center mb-8"
@@ -742,6 +801,13 @@ const MercurySection = ({ progress }) => {
 
             Anh nhìn thấy điều đó, và anh trân trọng nó – hơn cả những lời yêu thương bình thường đó.
           </motion.div>
+
+          {/* Message Form - Mercury Section */}
+          <MessageForm
+            journeySection="mercury-section"
+            onFormStateChange={setIsFormOpen}
+          />
+          <MessageDisplay journeySection="mercury-section" />
         </motion.div>
       </motion.div>
     </section>

@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Supabase configuration (contains sensitive keys)
+Supabase-Configure.txt
+
+# Environment variables
+.env
+.env.local
+.env.production
